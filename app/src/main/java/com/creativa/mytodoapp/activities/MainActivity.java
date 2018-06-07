@@ -1,5 +1,6 @@
 package com.creativa.mytodoapp.activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -47,5 +48,17 @@ public class MainActivity extends AppCompatActivity implements ToDoListAdapter.O
     @Override
     public void onItemClick(ToDoItem item) {
         Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
+
+
+        // Agregar nuevo sin limpiar el stack
+        FormToDoActivity.open(this);
+        FormToDoActivity.open(this,false);
+
+        // Agregar nuevo limpiando el stack
+        FormToDoActivity.open(this,true);
+
+        // Editar un registro pasandole el ID
+        FormToDoActivity.edit(this,11L);
+
     }
 }
