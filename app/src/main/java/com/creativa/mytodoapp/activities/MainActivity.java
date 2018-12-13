@@ -8,8 +8,12 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
 import com.creativa.mytodoapp.R;
+import com.creativa.mytodoapp.api.Response;
 import com.creativa.mytodoapp.items.ToDoItem;
+import com.creativa.mytodoapp.utils.ApiCaller;
+import com.creativa.mytodoapp.utils.OnApiCallFinish;
 import com.creativa.mytodoapp.utils.ToDoListAdapter;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +21,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements ToDoListAdapter.OnItemClickListener {
+public class MainActivity extends AppCompatActivity implements ToDoListAdapter.OnItemClickListener, OnApiCallFinish {
 
     @BindView(R.id.myTodoList) RecyclerView myTodoList;
 
@@ -42,6 +46,19 @@ public class MainActivity extends AppCompatActivity implements ToDoListAdapter.O
         mAdapter = new ToDoListAdapter(toDoItems);
         myTodoList.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener(this);
+
+        ApiCaller task = new ApiCaller();
+        task.setUrl("https://visibleoutsource.com/admin/api/idiomas/lista");
+        task.setRequestId(1);
+        task.setOnApiCallFinish(this);
+        task.execute();
+
+        ApiCaller delete = new ApiCaller();
+        delete.setUrl("http;//192.168.100.36:3000/api/task/4");
+        delete.setRequestId(3);
+        delete.setDelete(true);
+        delete.setOnApiCallFinish(this);
+        delete.execute();
     }
 
 
@@ -60,5 +77,31 @@ public class MainActivity extends AppCompatActivity implements ToDoListAdapter.O
         // Editar un registro pasandole el ID
         FormToDoActivity.edit(this,11L);
 
+    }
+
+
+
+
+
+    @Override
+    public void onSuccess(Integer requestId, String content) {
+
+        switch (requestId){
+            case 1:
+                Response response1 = new Gson().fromJson(content,Response.class);
+                Toast.makeText(this, response1.getResults().size()+" 1", Toast.LENGTH_LONG).show();
+                break;
+            case 2:
+                Response response2 = new Gson().fromJson(content,Response.class);
+                Toast.makeText(this, response2.getResults().size()+" 2", Toast.LENGTH_SHORT).show();
+                break;
+        }
+
+
+    }
+
+    @Override
+    public void onError(Integer requestId, Integer code) {
+        Toast.makeText(this, code+"", Toast.LENGTH_SHORT).show();
     }
 }
